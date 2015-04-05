@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {url "http://repo.spring.io/snapshot"}
+        maven {url "http://repo.spring.io/milestone"}
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'geoMapping'
+    version =  '0.1.0'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.hsqldb:hsqldb")
+    compile("org.springframework.boot:spring-boot-starter-test")
+    compile 'org.projectlombok:lombok:1.12.4'
+    compile 'org.webjars:angularjs:1.2.22'
+    compile 'org.webjars:bootstrap:3.3.4'
+    compile 'org.webjars:angular-ui-bootstrap:0.12.1-1'
+    compile 'org.webjars:angular-google-maps:2.0.11'
+    compile 'org.webjars:lodash:3.3.1'
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
+

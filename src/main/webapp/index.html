@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html ng-app="geomapping">
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="webjars/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+    <script src="webjars/jquery/1.11.1/jquery.min.js"></script>
+    <script src="webjars/angularjs/1.2.22/angular.min.js" ></script>
+    <script src="webjars/angularjs/1.2.22/angular-resource.min.js" ></script>
+    <script src="webjars/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="webjars/angular-ui-bootstrap/0.12.1-1/ui-bootstrap.js"></script>
+    <script src="webjars/angular-ui-bootstrap/0.12.1-1/ui-bootstrap-tpls.min.js"></script>
+    <script src="webjars/lodash/3.3.1/lodash.min.js"></script>
+    <script src="webjars/angular-google-maps/2.0.11/angular-google-maps.min.js"></script>
+
+
+
+    <title>GeoMapping</title>
+    <style>
+        .angular-google-map-container { height: 1000px; }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">GeoMapping</a>
+        </div>
+
+
+        </div>
+    </nav>
+
+    <div class='container-fluid' ng-controller="CountryController">
+        <div ng-class="{'has-error': !selectedCountry.id}">
+            <input  type="text" ng-model="selectedCountry" placeholder="Country" typeahead="item as item.displayName for item in getCountry($viewValue)" typeahead-loading="loadingCountries" class="form-control" typeahead-on-select="onSelect($item,$model,$label)">
+            <i ng-show="loadingCountries" class="glyphicon glyphicon-refresh"></i>
+        </div>
+
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">UN Locations</div>
+
+                        <!-- Table -->
+                        <table class="table table-condensed table-striped">
+                            <tr>
+                                <th>UN Location</th>
+                                <th>Action</th>
+                            </tr>
+                            <Tr ng-repeat="location in locations">
+                                <td>{{location.code}} - {{location.name}}</td>
+                                <td></td>
+                            </Tr>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Mappings</div>
+
+                        <!-- Table -->
+                        <table class="table table-condensed table-striped">
+                            <tr>
+                                <th>City</th>
+                                <th>UN Location</th>
+                                <th>Action</th>
+                            </tr>
+                            <Tr ng-repeat="mapping in mappings">
+                                <td>{{mapping.city.name}}</td>
+                                <td>{{mapping.location.code}} - {{mapping.location.name}}</td>
+                                <td></td>
+                            </Tr>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Cities</div>
+
+                        <!-- Table -->
+                        <table class="table table-condensed table-striped">
+                            <tr>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                            <Tr ng-repeat="city in cities">
+                                <td>{{city.name}}</td>
+                                <td></td>
+                            </Tr>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ui-gmap-google-map center='map.center' refresh='selectedCountry.id' zoom='zoom' control='map'>
+            <ui-gmap-markers models="locations" coords="'self'" options="'options'" >
+            </ui-gmap-markers>
+            <ui-gmap-markers models="cities" coords="'self'" options="'options'" >
+            </ui-gmap-markers>
+
+        </ui-gmap-google-map>
+
+        {{mappings | json}}
+
+    </div>
+
+
+
+    <script src="scripts/controller.js"></script>
+</body>
+</html>
