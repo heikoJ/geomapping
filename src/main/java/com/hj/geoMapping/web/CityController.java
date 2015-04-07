@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Created by heiko on 03.04.15.
@@ -26,16 +27,21 @@ public class CityController {
     public Page<City> findCitiesByCountry(
             @PathVariable String countryCode,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "100") int size) {
 
-        return repository.findByCountryCodeAllIgnoringCase(countryCode, new PageRequest(page,size));
+        Page<City> allCities = repository.findByCountryCodeAllIgnoringCase(countryCode, new PageRequest(page,size));
+        List<City> unmappedCitites = repository.findUnmappedForByCountry(countryCode,new PageRequest(page,size)).getContent();
+
+        allCities.forEach(city -> city.setMapped(!unmappedCitites.contains(city)));
+
+        return allCities;
     }
 
     @RequestMapping(value="/{countryCode}/unmapped", method = RequestMethod.GET)
     public Page<City> findUnmappedCitiesByCountry(
             @PathVariable String countryCode,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "100") int size) {
 
         return repository.findUnmappedForByCountry(countryCode, new PageRequest(page, size));
 
@@ -52,7 +58,7 @@ public class CityController {
     @ResponseStatus(HttpStatus.OK)
     public void updateCity(
             @RequestBody @Valid City city,
-            @RequestParam Long id) {
+            @PathVariable Long id) {
         City persistedCity = repository.findOne(id);
         persistedCity.updateValues(city);
         repository.save(persistedCity);

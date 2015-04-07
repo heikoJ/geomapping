@@ -83,7 +83,9 @@
     <orderEntry type="library" exported="" name="Gradle: org.webjars:angular-ui-bootstrap:0.12.1-1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.webjars:jquery:1.11.1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.webjars:angular-google-maps:2.0.11" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: org.webjars:angularjs:1.2.22" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.webjars:lodash:3.3.1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: org.webjars:codef0rmer-angular-dragdrop:1.0.11" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: org.webjars:angularjs:1.2.23" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: org.webjars:jquery-ui:1.11.4" level="project" />
   </component>
 </module>

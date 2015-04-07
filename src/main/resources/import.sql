@@ -30,7 +30,7 @@ insert into city(country_code, name) values('DE','Hetlingen');
 
 insert into city(country_code, name) values('GB','London');
 
-insert into city(country_code, name) values('DE','Emden');
+insert into city(country_code, name,latitude,longitude) values('DE','Emden',53.3644256,7.1553541);
 
 insert into mapping(location_id, city_id) values(1,1);
 insert into mapping(location_id, city_id) values(2,2);

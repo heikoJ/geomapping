@@ -1,6 +1,7 @@
 package com.hj.geoMapping.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Table(uniqueConstraints =
     @UniqueConstraint(columnNames = {"COUNTRY_CODE","NAME"}))
 @Data
+@EqualsAndHashCode(of = "id")
 public class City {
 
     @Id
@@ -30,6 +32,9 @@ public class City {
 
     @Column(name="LONGITUDE")
     private Float longitude;
+
+    @Transient
+    private boolean isMapped;
 
 
 

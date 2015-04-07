@@ -5,16 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="webjars/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="webjars/jquery-ui/1.11.4/jquery-ui.min.css">
     <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
     <script src="webjars/jquery/1.11.1/jquery.min.js"></script>
-    <script src="webjars/angularjs/1.2.22/angular.min.js" ></script>
-    <script src="webjars/angularjs/1.2.22/angular-resource.min.js" ></script>
+    <script src="webjars/jquery-ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="webjars/angularjs/1.2.23/angular.min.js" ></script>
+    <script src="webjars/angularjs/1.2.23/angular-resource.min.js" ></script>
     <script src="webjars/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="webjars/angular-ui-bootstrap/0.12.1-1/ui-bootstrap.js"></script>
     <script src="webjars/angular-ui-bootstrap/0.12.1-1/ui-bootstrap-tpls.min.js"></script>
     <script src="webjars/lodash/3.3.1/lodash.min.js"></script>
     <script src="webjars/angular-google-maps/2.0.11/angular-google-maps.min.js"></script>
-
+    <script src="webjars/codef0rmer-angular-dragdrop/1.0.11/angular-dragdrop.min.js"></script>
+    <script src="scripts/controller.js"></script>
 
 
     <title>GeoMapping</title>
@@ -40,11 +43,19 @@
         </div>
     </nav>
 
+
+
+
     <div class='container-fluid' ng-controller="CountryController">
         <div ng-class="{'has-error': !selectedCountry.id}">
             <input  type="text" ng-model="selectedCountry" placeholder="Country" typeahead="item as item.displayName for item in getCountry($viewValue)" typeahead-loading="loadingCountries" class="form-control" typeahead-on-select="onSelect($item,$model,$label)">
             <i ng-show="loadingCountries" class="glyphicon glyphicon-refresh"></i>
         </div>
+
+
+
+
+
 
 
         <div class="container-fluid">
@@ -60,7 +71,7 @@
                                 <th>Action</th>
                             </tr>
                             <Tr ng-repeat="location in locations">
-                                <td>{{location.code}} - {{location.name}}</td>
+                                <td><div class="btn" data-drop="true" ng-model="droppedCities" jqyoui-droppable="{onDrop:'onCityDropped(location)'}">{{location.code}} - {{location.name}}</div></td>
                                 <td></td>
                             </Tr>
                         </table>
@@ -81,12 +92,15 @@
                             <Tr ng-repeat="mapping in mappings">
                                 <td>{{mapping.city.name}}</td>
                                 <td>{{mapping.location.code}} - {{mapping.location.name}}</td>
-                                <td></td>
+                                <td><div class="btn btn-xs btn-danger" ng-click="deleteMapping($index,mapping.id)"><span class="glyphicon glyphicon-trash"></span> Delete</div></td>
                             </Tr>
                         </table>
 
                     </div>
                 </div>
+
+
+
                 <div class="col-lg-3">
                     <div class="panel panel-default">
                         <div class="panel-heading">Cities</div>
@@ -95,10 +109,12 @@
                         <table class="table table-condensed table-striped">
                             <tr>
                                 <th>Name</th>
+                                <th>Coordinates</th>
                                 <th>Action</th>
                             </tr>
                             <Tr ng-repeat="city in cities">
-                                <td>{{city.name}}</td>
+                                <td><div ng-model="cities" class="btn" ng-class="{'btn-primary' : !city.mapped}"  data-drag="{{!city.mapped}}" jqyoui-draggable="{animate:true, placeholder:'keep', index: {{$index}}}" data-jqyoui-options="{revert: 'invalid'}" >{{city.name}}</div></td>
+                                <td>{{city.latitude | number : 6}}, {{city.longitude | number : 6}}</td>
                                 <td></td>
                             </Tr>
                         </table>
@@ -110,17 +126,20 @@
         <ui-gmap-google-map center='map.center' refresh='selectedCountry.id' zoom='zoom' control='map'>
             <ui-gmap-markers models="locations" coords="'self'" options="'options'" >
             </ui-gmap-markers>
-            <ui-gmap-markers models="cities" coords="'self'" options="'options'" >
+            <ui-gmap-markers models="cities" coords="'self'" options="'options'" events="cityMarkerEvents" >
             </ui-gmap-markers>
+
+
+            <ui-gmap-polyline ng-repeat="m in mappingLines" path="m.path"></ui-gmap-polyline>
 
         </ui-gmap-google-map>
 
-        {{mappings | json}}
+     droppedCities: {{droppedCities}}
 
     </div>
 
 
 
-    <script src="scripts/controller.js"></script>
+
 </body>
 </html>

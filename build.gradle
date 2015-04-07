@@ -25,6 +25,9 @@ repositories {
     mavenCentral()
 }
 
+jar.into('static') {
+    from('src/main/webapp')
+}
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
@@ -32,11 +35,13 @@ dependencies {
     compile("org.hsqldb:hsqldb")
     compile("org.springframework.boot:spring-boot-starter-test")
     compile 'org.projectlombok:lombok:1.12.4'
-    compile 'org.webjars:angularjs:1.2.22'
+    compile 'org.webjars:angularjs:1.2.23'
     compile 'org.webjars:bootstrap:3.3.4'
     compile 'org.webjars:angular-ui-bootstrap:0.12.1-1'
     compile 'org.webjars:angular-google-maps:2.0.11'
     compile 'org.webjars:lodash:3.3.1'
+    compile 'org.webjars:codef0rmer-angular-dragdrop:1.0.11'
+    compile 'org.webjars:jquery-ui:1.11.4'
 
 }
 

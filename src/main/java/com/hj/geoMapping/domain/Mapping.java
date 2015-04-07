@@ -17,11 +17,12 @@ public class Mapping {
     private Long id;
 
 
-    @ManyToOne()
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "CITY_ID")
+
     private City city;
 
-    @OneToOne()
+    @OneToOne(orphanRemoval = false,cascade = {})
     @JoinColumn(name = "LOCATION_ID")
     private UNLocation location;
 

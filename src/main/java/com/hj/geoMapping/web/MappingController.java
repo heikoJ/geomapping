@@ -36,7 +36,7 @@ public class MappingController {
     public Page<Mapping> getMappingsForCountryCode(
             @PathVariable String countryCode,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "100") int size) {
 
         return repository.findMappingsForCountryCode(countryCode, new PageRequest(page,size));
 
@@ -52,6 +52,12 @@ public class MappingController {
         mapping.setLocation(location);
 
         repository.save(mapping);
+    }
+
+    @RequestMapping(value="/{id}",method=RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteMapping(@PathVariable Long id) {
+        repository.delete(id);
     }
 
 }
