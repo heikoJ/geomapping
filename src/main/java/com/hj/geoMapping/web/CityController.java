@@ -27,7 +27,7 @@ public class CityController {
     public Page<City> findCitiesByCountry(
             @PathVariable String countryCode,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "100") int size) {
+            @RequestParam(defaultValue = "10000") int size) {
 
         Page<City> allCities = repository.findByCountryCodeAllIgnoringCase(countryCode, new PageRequest(page,size));
         List<City> unmappedCitites = repository.findUnmappedForByCountry(countryCode,new PageRequest(page,size)).getContent();
@@ -41,7 +41,7 @@ public class CityController {
     public Page<City> findUnmappedCitiesByCountry(
             @PathVariable String countryCode,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "100") int size) {
+            @RequestParam(defaultValue = "10000") int size) {
 
         return repository.findUnmappedForByCountry(countryCode, new PageRequest(page, size));
 

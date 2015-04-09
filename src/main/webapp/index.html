@@ -70,7 +70,7 @@
                                 <th>UN Location</th>
                                 <th>Action</th>
                             </tr>
-                            <Tr ng-repeat="location in locations">
+                            <Tr ng-repeat="location in locations | limitTo:10">
                                 <td><div class="btn" data-drop="true" ng-model="droppedCities" jqyoui-droppable="{onDrop:'onCityDropped(location)'}">{{location.code}} - {{location.name}}</div></td>
                                 <td></td>
                             </Tr>
@@ -124,7 +124,7 @@
             </div>
         </div>
         <ui-gmap-google-map center='map.center' refresh='selectedCountry.id' zoom='zoom' control='map'>
-            <ui-gmap-markers models="locations" coords="'self'" options="'options'" >
+            <ui-gmap-markers models="locations" coords="'self'" options="'options'" doCluster="true" >
             </ui-gmap-markers>
             <ui-gmap-markers models="cities" coords="'self'" options="'options'" events="cityMarkerEvents" >
             </ui-gmap-markers>
