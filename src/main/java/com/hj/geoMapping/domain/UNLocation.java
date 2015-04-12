@@ -1,5 +1,7 @@
 package com.hj.geoMapping.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hj.geoMapping.common.GeoLocation;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -40,6 +42,12 @@ public class UNLocation {
     @Transient
     public String getCountryCode() {
         return code.substring(0,2);
+    }
+
+    @Transient
+    @JsonIgnore
+    public GeoLocation getGeoLocation() {
+        return new GeoLocation(latitude,longitude);
     }
 
     public UNLocation() {

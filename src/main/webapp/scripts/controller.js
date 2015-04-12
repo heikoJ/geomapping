@@ -44,28 +44,28 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
 
 
 
-    $scope.getLocationsForCountry = function(countryCode) {
-        $http.get("/locations/" + countryCode).
-            then(function(response) {
-                $scope.locations = response.data.content;
+    $scope.getLocationsForCountry = function(countryCode,bounds) {
+        $log.log("Zoom: " +$scope.zoom);
+        if($scope.zoom>=10) {
+            $http.get("/locations/" + countryCode + '?bounds=' + bounds).
+                then(function (response) {
+                    $scope.locations = response.data;
 
 
-                $scope.locations.forEach(function (location) {
-                    location.options = {
-                        draggable: true,
-                        icon: 'https://chart.googleapis.com/chart?chst=d_bubble_text_small_withshadow&chld=edge_bc|' + location.name + '|C6EF8C|000000'
-                    };
+                    $scope.locations.forEach(function (location) {
+                        location.options = {
+                            draggable: true,
+                            icon: 'https://chart.googleapis.com/chart?chst=d_bubble_text_small_withshadow&chld=edge_bc|' + location.name + '|C6EF8C|000000'
+                        };
 
 
+                    });
+
+
+                    $scope.filteredLocations = $scope.locations;
+                    $scope.resetLocationFilter();
                 });
-
-
-                $scope.filteredLocations = $scope.locations;
-                $scope.resetLocationFilter();
-            });
-
-
-
+        }
 
 
     };
@@ -143,6 +143,7 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
             }
 
 
+
             if(mappingIndex>-1) {
                 $log.log("line:");
                 $log.log($scope.mappingLines[mappingIndex]);
@@ -157,6 +158,20 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
 
         }
     };
+
+    $scope.mapEvents = {
+
+
+        idle: function() {
+            var bounds = $scope.map.getGMap().getBounds();
+            var boundsStr = bounds.getSouthWest().toUrlValue() + "," + bounds.getNorthEast().toUrlValue();
+
+            $log.log("Bounds" + boundsStr);
+
+            $scope.getLocationsForCountry($scope.selectedCountry.code,boundsStr);
+        }
+
+    }
 
 
     $scope.getCitiesForCountry = function(countryCode) {
@@ -221,7 +236,7 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
         var countryCode = $scope.selectedCountry.code;
         $scope.locCurPage=1;
         $scope.getMappingsForCountry(countryCode);
-        $scope.getLocationsForCountry(countryCode);
+      //  $scope.getLocationsForCountry(countryCode);
         $scope.getCitiesForCountry(countryCode);
 
 

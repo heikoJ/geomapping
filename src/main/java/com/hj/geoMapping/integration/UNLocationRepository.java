@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,7 +18,7 @@ public interface UNLocationRepository extends CrudRepository<UNLocation,Long> {
     UNLocation findByCodeAllIgnoringCase(String code);
 
     @Query("SELECT u FROM UNLocation u WHERE upper(substring(u.code,1,2)) = upper(?1)")
-    Page<UNLocation> findByCountryCodeAllIgnoringCase(String countryCode, Pageable pageable);
+    List<UNLocation> findByCountryCodeAllIgnoringCase(String countryCode);
 
 
 

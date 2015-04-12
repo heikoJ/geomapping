@@ -135,7 +135,7 @@
                 </div>
             </div>
         </div>
-        <ui-gmap-google-map center='map.center' refresh='selectedCountry.id' zoom='zoom' control='map'>
+        <ui-gmap-google-map center='map.center' refresh='selectedCountry.id' zoom='zoom' control='map' events='mapEvents'>
             <ui-gmap-markers models="locations" coords="'self'" options="'options'" doCluster="true" >
             </ui-gmap-markers>
             <ui-gmap-markers models="cities" coords="'self'" options="'options'" events="cityMarkerEvents" >
@@ -146,18 +146,11 @@
 
         </ui-gmap-google-map>
 
-     droppedCities: {{droppedCities}}
 
-
-
-        Mappings: {{mappings}}
-
-        Cities: {{cities}}
-
-        MappingLines: {{mappingLines}}
 
     </div>
 
+Zoom: {{zoom}}
 
 
 
