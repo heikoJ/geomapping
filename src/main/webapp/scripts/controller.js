@@ -1,6 +1,38 @@
-angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop']).controller('CountryController', function($scope, $http, $log) {
+angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop']).controller('CountryController', function($scope, $http, $log, filterFilter) {
 
     $scope.locationCoords = [];
+
+    $scope.filteredLocations = [];
+
+    // create empty search model (object) to trigger $watch on update
+    $scope.locationSearch = {};
+
+    $scope.resetLocationFilter = function () {
+        // needs to be a function or it won't trigger a $watch
+        $scope.locationSearch = {};
+    };
+
+
+    $scope.locItemsPerPage = 10;
+
+    $scope.resetLocationFilter = function () {
+        $log.log('reset');
+        // needs to be a function or it won't trigger a $watch
+        $scope.locationSearch = {};
+        $scope.locCurPage = 1;
+        $scope.locTotalItems = $scope.filteredLocations.length;
+        $scope.locPages = Math.ceil($scope.locTotalItems / $scope.locItemsPerPage);
+    };
+
+    // $watch search to update pagination
+    $scope.$watch('locationSearch', function (newVal, oldVal) {
+        var filter = (newVal && newVal.name.length>2) ? newVal.name : '';
+        $scope.filteredLocations = filterFilter($scope.locations, filter);
+        $scope.locTotalItems = $scope.filteredLocations.length;
+        $scope.locPages = Math.ceil($scope.locTotalItems / $scope.locItemsPerPage);
+        $scope.locCurPage = 1;
+    }, true);
+
 
     $scope.zoom = 3;
 
@@ -10,10 +42,13 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
     $scope.citites = [];
     $scope.droppedCities = [];
 
+
+
     $scope.getLocationsForCountry = function(countryCode) {
         $http.get("/locations/" + countryCode).
             then(function(response) {
                 $scope.locations = response.data.content;
+
 
                 $scope.locations.forEach(function (location) {
                     location.options = {
@@ -23,7 +58,16 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
 
 
                 });
+
+
+                $scope.filteredLocations = $scope.locations;
+                $scope.resetLocationFilter();
             });
+
+
+
+
+
     };
 
     $scope.onCityDropped = function(event,ui,location) {
@@ -46,9 +90,26 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
 
         $scope.mappings.push(mapping);
 
-        $http.post("/mappings", mapping);
+        $http.post("/mappings", mapping).
+            then(function(response) {
+                mapping.id = response;
+                $scope.mappingLines.push( {
+                    id: mapping.id,
+                    path: [
+                        {
+                            latitude: mapping.city.latitude,
+                            longitude: mapping.city.longitude
+                        },
+                        {
+                            latitude: mapping.location.latitude,
+                            longitude: mapping.location.longitude
+                        }
+                    ]
+                });
+                $scope.map.refresh();
+            });
 
-        $scope.map.refresh();
+
     };
 
     $scope.deleteMapping = function(index) {
@@ -61,8 +122,9 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
         city.mapped = false;
 
 
+        $scope.mappingLines.splice(index,1);
 
-        $scope.mappings.pop(index);
+        $scope.mappings.splice(index,1);
     }
 
 
@@ -72,6 +134,24 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
             $log.log('marker dragend');
             $log.log(model);
 
+            var mappingIndex = -1;
+            for(var i=0;i<$scope.mappings.length;i++) {
+                if ($scope.mappings[i].city.id == model.id) {
+                    mappingIndex = i;
+                    break;
+                }
+            }
+
+
+            if(mappingIndex>-1) {
+                $log.log("line:");
+                $log.log($scope.mappingLines[mappingIndex]);
+                $scope.mappingLines[mappingIndex].path[0].latitude = model.latitude;
+                $scope.mappingLines[mappingIndex].path[0].longitude = model.longitude;
+
+            }
+
+            $scope.map.refresh();
 
             $http.put("/cities/" + model.id, model);
 
@@ -139,11 +219,17 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
 
     $scope.onSelect = function(item,model,label) {
         var countryCode = $scope.selectedCountry.code;
+        $scope.locCurPage=1;
         $scope.getMappingsForCountry(countryCode);
         $scope.getLocationsForCountry(countryCode);
         $scope.getCitiesForCountry(countryCode);
 
 
     };
+
+    $scope.gotoLocation = function(location) {
+        $scope.zoom = 11;
+        $scope.map.refresh({latitude:location.latitude, longitude: location.longitude});
+    }
 
 });

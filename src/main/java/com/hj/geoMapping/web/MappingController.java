@@ -44,7 +44,7 @@ public class MappingController {
 
     @RequestMapping(method=RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void createMapping(@RequestBody @Valid Mapping mapping) {
+    public Long createMapping(@RequestBody @Valid Mapping mapping) {
         UNLocation location = locationRepository.findOne(mapping.getLocation().getId());
         City city = cityRepository.findOne(mapping.getCity().getId());
 
@@ -52,6 +52,8 @@ public class MappingController {
         mapping.setLocation(location);
 
         repository.save(mapping);
+
+        return mapping.getId();
     }
 
     @RequestMapping(value="/{id}",method=RequestMethod.DELETE)

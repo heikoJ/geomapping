@@ -9,8 +9,8 @@
     <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
     <script src="webjars/jquery/1.11.1/jquery.min.js"></script>
     <script src="webjars/jquery-ui/1.11.4/jquery-ui.min.js"></script>
-    <script src="webjars/angularjs/1.2.23/angular.min.js" ></script>
-    <script src="webjars/angularjs/1.2.23/angular-resource.min.js" ></script>
+    <script src="webjars/angularjs/1.3.14/angular.min.js" ></script>
+    <script src="webjars/angularjs/1.3.14/angular-resource.min.js" ></script>
     <script src="webjars/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="webjars/angular-ui-bootstrap/0.12.1-1/ui-bootstrap.js"></script>
     <script src="webjars/angular-ui-bootstrap/0.12.1-1/ui-bootstrap-tpls.min.js"></script>
@@ -23,6 +23,12 @@
     <title>GeoMapping</title>
     <style>
         .angular-google-map-container { height: 1000px; }
+
+        #searchclear {
+             position:relative;
+             left:-20px;
+        }
+
     </style>
 </head>
 <body>
@@ -58,23 +64,29 @@
 
 
 
+
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-3">
                     <div class="panel panel-default">
                         <div class="panel-heading">UN Locations</div>
-
+                        <div ng-class="{'has-error': locationSearch && (locationSearch.name.length < 3)}">
+                            <input type="text" ng-model="locationSearch.name"/><i ng-click="resetLocationFilter()" id="searchclear" class="glyphicon glyphicon-remove-circle"></i>
+                        </div>
                         <!-- Table -->
                         <table class="table table-condensed table-striped">
                             <tr>
                                 <th>UN Location</th>
                                 <th>Action</th>
                             </tr>
-                            <Tr ng-repeat="location in locations | limitTo:10">
-                                <td><div class="btn" data-drop="true" ng-model="droppedCities" jqyoui-droppable="{onDrop:'onCityDropped(location)'}">{{location.code}} - {{location.name}}</div></td>
+                            <Tr ng-repeat="location in  filteredLocations | limitTo : -(filteredLocations.length - (locItemsPerPage * (locCurPage -1))) | limitTo: locItemsPerPage">
+                                <td><div ng-click="gotoLocation(location)" class="btn" data-drop="true" ng-model="droppedCities" jqyoui-droppable="{onDrop:'onCityDropped(location)'}">{{location.code}} - {{location.name}}</div></td>
+
                                 <td></td>
                             </Tr>
                         </table>
+                        <pagination total-items="locTotalItems" ng-model="locCurPage" items-per-page="locItemsPerPage" max-size="5" class="pagination-sm" boundary-links="true" rotate="true" num-pages="locNumPages"></pagination>
+                        <pre>Page: {{locCurPage}} / {{locNumPages}}. {{filteredLocations.length}}  locations found.  {{locCurPage}}</pre>
 
                     </div>
                 </div>
@@ -130,11 +142,19 @@
             </ui-gmap-markers>
 
 
-            <ui-gmap-polyline ng-repeat="m in mappingLines" path="m.path"></ui-gmap-polyline>
+            <ui-gmap-polyline static="false" ng-repeat="m in mappingLines" path="m.path"></ui-gmap-polyline>
 
         </ui-gmap-google-map>
 
      droppedCities: {{droppedCities}}
+
+
+
+        Mappings: {{mappings}}
+
+        Cities: {{cities}}
+
+        MappingLines: {{mappingLines}}
 
     </div>
 
