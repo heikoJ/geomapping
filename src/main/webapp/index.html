@@ -136,13 +136,15 @@
             </div>
         </div>
         <ui-gmap-google-map center='map.center' refresh='selectedCountry.id' zoom='zoom' control='map' events='mapEvents'>
-            <ui-gmap-markers models="locations" coords="'self'" options="'options'" doCluster="true" >
+            <ui-gmap-markers models="markers" coords="'location'" options="'options'" doCluster="false" >
             </ui-gmap-markers>
-            <ui-gmap-markers models="cities" coords="'self'" options="'options'" events="cityMarkerEvents" >
+         <!--   <ui-gmap-markers models="cities" coords="'self'" options="'options'" events="cityMarkerEvents" >
             </ui-gmap-markers>
 
 
             <ui-gmap-polyline static="false" ng-repeat="m in mappingLines" path="m.path"></ui-gmap-polyline>
+
+-->
 
         </ui-gmap-google-map>
 

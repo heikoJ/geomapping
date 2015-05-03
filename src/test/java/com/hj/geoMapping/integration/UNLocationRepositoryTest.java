@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -33,7 +34,7 @@ public class UNLocationRepositoryTest {
     @Test
     public void testFindByCountryCodeAllIgnoringCase() throws Exception {
         separator();
-        Page<UNLocation> page = repository.findByCountryCodeAllIgnoringCase("de", new PageRequest(0,100));
+        List<UNLocation> page = repository.findByCountryCodeAllIgnoringCase("de");
         page.forEach(System.out::println);
     }
 

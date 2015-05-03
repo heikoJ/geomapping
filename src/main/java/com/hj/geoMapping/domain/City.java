@@ -23,6 +23,9 @@ public class City {
     @Column(nullable=false , name="COUNTRY_CODE")
     private String countryCode;
 
+    @Column(name="POSTAL_CODE")
+    private String postalCode;
+
     @Column(nullable = false, name="NAME")
     private String name;
 

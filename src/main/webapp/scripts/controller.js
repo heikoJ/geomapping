@@ -2,6 +2,10 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
 
     $scope.locationCoords = [];
 
+    $scope.markers = [];
+
+    var locationRequestCount=0;
+
     $scope.filteredLocations = [];
 
     // create empty search model (object) to trigger $watch on update
@@ -68,6 +72,20 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
         }
 
 
+    };
+
+    $scope.getLocations = function(bounds) {
+        locationRequestCount++;
+        //$log.log("Zoom: " +$scope.zoom);
+
+            $http.get("/locations/?bounds=" + bounds ).
+                then(function (response) {
+                    locationRequestCount--;
+                    if(locationRequestCount==0) {
+                        $scope.markers = response.data;
+                        //$log.log($scope.markers);
+                    }
+                });
     };
 
     $scope.onCityDropped = function(event,ui,location) {
@@ -168,7 +186,7 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
 
             $log.log("Bounds" + boundsStr);
 
-            $scope.getLocationsForCountry($scope.selectedCountry.code,boundsStr);
+            $scope.getLocations(boundsStr);
         }
 
     }
