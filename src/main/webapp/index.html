@@ -6,6 +6,7 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="webjars/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="webjars/jquery-ui/1.11.4/jquery-ui.min.css">
+    <link rel="stylesheet" href="webjars/angular-block-ui/0.2.0/dist/angular-block-ui.min.css">
     <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
     <script src="webjars/jquery/1.11.1/jquery.min.js"></script>
     <script src="webjars/jquery-ui/1.11.4/jquery-ui.min.js"></script>
@@ -17,6 +18,7 @@
     <script src="webjars/lodash/3.3.1/lodash.min.js"></script>
     <script src="webjars/angular-google-maps/2.0.11/angular-google-maps.min.js"></script>
     <script src="webjars/codef0rmer-angular-dragdrop/1.0.11/angular-dragdrop.min.js"></script>
+    <script src="webjars/angular-block-ui/0.2.0/dist/angular-block-ui.min.js"></script>
     <script src="scripts/controller.js"></script>
 
 
@@ -135,15 +137,23 @@
                 </div>
             </div>
         </div>
-        <ui-gmap-google-map center='map.center' refresh='selectedCountry.id' zoom='zoom' control='map'>
-            <ui-gmap-markers models="locations" coords="'self'" options="'options'" doCluster="true" >
+
+        <div ng-show="busy">
+            Busy!
+        </div>
+
+        <!-- refresh='selectedCountry.id' -->
+        <ui-gmap-google-map center='map.center'  zoom='zoom' control='map' events="mapEvents" options='map.options' >
+            <ui-gmap-markers models="locations"  coords="'self'" options="'options'" doCluster="true" clusterEvents="clusterEvents" clusterOptions="{maxZoom:15}" fit='clusterFit' doRebuildAll="false" events="locationEvents">
             </ui-gmap-markers>
+
+            <!--
             <ui-gmap-markers models="cities" coords="'self'" options="'options'" events="cityMarkerEvents" >
             </ui-gmap-markers>
 
 
             <ui-gmap-polyline static="false" ng-repeat="m in mappingLines" path="m.path"></ui-gmap-polyline>
-
+                -->
         </ui-gmap-google-map>
 
 

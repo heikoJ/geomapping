@@ -1,4 +1,8 @@
-angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop']).controller('CountryController', function($scope, $http, $log, filterFilter) {
+var myapp = angular.module('geomapping',['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop','blockUI']).config(function(blockUIConfig) {
+   blockUIConfig.autoBlock = false;
+}) ;
+
+myapp.controller('CountryController', function($scope, $http, $log, filterFilter, blockUI) {
 
     $scope.locationCoords = [];
 
@@ -12,6 +16,7 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
         $scope.locationSearch = {};
     };
 
+    $scope.busy = false;
 
     $scope.locItemsPerPage = 10;
 
@@ -36,7 +41,7 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
 
     $scope.zoom = 3;
 
-    $scope.map = { center: { latitude: 40.2534258, longitude: 31.1740902 }, zoom: 3 };
+    $scope.map = { center: { latitude: 40.2534258, longitude: 31.1740902 }, zoom: 3, options: {disableDefaultUI: false, draggable: true} };
 
 
     $scope.citites = [];
@@ -45,23 +50,41 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
 
 
     $scope.getLocationsForCountry = function(countryCode) {
+        $scope.map.options.disableDefaultUI = true;
+        $scope.map.options.draggable = false;
+        $scope.busy = true;
+        blockUI.start();
+        $scope.locations = [];
+        $scope.clusterFit = false;
         $http.get("/locations/" + countryCode).
             then(function(response) {
-                $scope.locations = response.data.content;
+                var temp = response.data.content;
 
+                $log.log("Start loations");
 
-                $scope.locations.forEach(function (location) {
+                temp.forEach(function (location) {
                     location.options = {
                         draggable: true,
-                        icon: 'https://chart.googleapis.com/chart?chst=d_bubble_text_small_withshadow&chld=edge_bc|' + location.name + '|C6EF8C|000000'
+                        labelAnchor:'12 60',
+                        labelContent:location.name
                     };
 
 
                 });
 
+                $scope.locations = temp;
+
+                $log.log("Stop locations");
+
+                //$scope.map.refresh();
+                $scope.clusterFit = true;
+
+                $scope.map.refresh();
+
 
                 $scope.filteredLocations = $scope.locations;
                 $scope.resetLocationFilter();
+
             });
 
 
@@ -125,9 +148,27 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
         $scope.mappingLines.splice(index,1);
 
         $scope.mappings.splice(index,1);
-    }
+    } ;
 
+    $scope.mapEvents = {
+        bounds_changed: function() {
+            $scope.map.options.disableDefaultUI = false;
+            $scope.map.options.draggable = true;
+            $scope.busy = false;
+            blockUI.stop();
 
+            $log.log("bounds changed!");
+        }
+    };
+
+    $scope.locationEvents = {
+
+      dragend: function(marker,eventName, model) {
+          marker.set('labelContent', model.name + ' Dropped');
+          $scope.zoom = 15;
+          $scope.map.refresh({latitude: model.latitude, longitude: model.longitude});
+      }
+    };
 
     $scope.cityMarkerEvents = {
         dragend : function (marker, eventName, model) {
@@ -220,9 +261,9 @@ angular.module('geomapping', ['ui.bootstrap','uiGmapgoogle-maps', 'ngDragDrop'])
     $scope.onSelect = function(item,model,label) {
         var countryCode = $scope.selectedCountry.code;
         $scope.locCurPage=1;
-        $scope.getMappingsForCountry(countryCode);
+     //   $scope.getMappingsForCountry(countryCode);
         $scope.getLocationsForCountry(countryCode);
-        $scope.getCitiesForCountry(countryCode);
+     //   $scope.getCitiesForCountry(countryCode);
 
 
     };
