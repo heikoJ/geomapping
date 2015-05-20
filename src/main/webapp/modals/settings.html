@@ -1,0 +1,56 @@
+
+
+<style>
+.animate-show {
+height: 50px;
+opacity: 1;
+}
+
+.animate-show.ng-hide-add.ng-hide-add-active,
+.animate-show.ng-hide-remove.ng-hide-remove-active {
+-webkit-transition: all linear 0.5s;
+transition: all linear 0.5s;
+}
+
+.animate-show.ng-hide {
+height: 0;
+opacity: 0;
+}
+</style>
+
+<div class="modal-header">
+    <h3 class="modal-title">Settings</h3>
+</div>
+<div class="modal-body" style="overflow: auto">
+
+    <div class="list-group">
+        <div class="list-group-item">
+            <b>Zoom in when Marker is dropped:</b>  <span class="pull-right"> <input toggle-checkbox  type="checkbox" ng-model="settings.zoomOnMarkerDropped"  data-size="mini" data-onstyle="success" data-offstyle="danger" ></span>
+        </div>
+
+        <div ng-show="settings.zoomOnMarkerDropped" class="list-group-item animate-show" ng-class="{disabled: !settings.zoomOnMarkerDropped}">
+            Zoom Level: <input class="pull-right" type="number" ng-model="settings.zoomLevelOnMarkerDropped" min="5" max="20" ng-disabled="!settings.zoomOnMarkerDropped">
+        </div>
+
+        <div class="list-group-item">
+            <b>Clustering:</b> <span class="pull-right"><input toggle-checkbox  type="checkbox" ng-model="settings.enableClustering"  data-size="mini" data-onstyle="success" data-offstyle="danger" > </span>
+        </div>
+
+        <div ng-show="settings.enableClustering" class="list-group-item clearfix animate-show" ng-class="{disabled:!settings.enableClustering}">
+                Clustering Method:
+                <div class="btn-group pull-right">
+                    <label class="btn btn-primary" ng-model="settings.clusteringMethod" btn-radio="'server'" >Server Side</label>
+                    <label class="btn btn-primary" ng-model="settings.clusteringMethod" btn-radio="'client'" uncheckable>Client Side</label>
+                </div>
+        </div>
+
+        <div ng-show="settings.enableClustering" class="list-group-item animate-show" ng-class="{disabled:!settings.enableClustering}">
+            Cluster Size: <input class="pull-right" type="number" ng-model="settings.clusterSize" min="1" max="20" ng-disabled="!settings.enableClustering">
+        </div>
+    </div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

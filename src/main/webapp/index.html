@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="geomapping">
+<html ng-app="geomappingApp">
 <head lang="en">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,11 +7,15 @@
     <link rel="stylesheet" href="webjars/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="webjars/jquery-ui/1.11.4/jquery-ui.min.css">
     <link rel="stylesheet" href="webjars/angular-block-ui/0.2.0/dist/angular-block-ui.min.css">
+    <link rel="stylesheet" href="webjars/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css">
+
+
     <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
     <script src="webjars/jquery/1.11.1/jquery.min.js"></script>
     <script src="webjars/jquery-ui/1.11.4/jquery-ui.min.js"></script>
     <script src="webjars/angularjs/1.3.14/angular.min.js" ></script>
     <script src="webjars/angularjs/1.3.14/angular-resource.min.js" ></script>
+    <script src="webjars/angularjs/1.3.14/angular-route.min.js"></script>
     <script src="webjars/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="webjars/angular-ui-bootstrap/0.12.1-1/ui-bootstrap.js"></script>
     <script src="webjars/angular-ui-bootstrap/0.12.1-1/ui-bootstrap-tpls.min.js"></script>
@@ -19,7 +23,10 @@
     <script src="webjars/angular-google-maps/2.0.11/angular-google-maps.min.js"></script>
     <script src="webjars/codef0rmer-angular-dragdrop/1.0.11/angular-dragdrop.min.js"></script>
     <script src="webjars/angular-block-ui/0.2.0/dist/angular-block-ui.min.js"></script>
-    <script src="scripts/controller.js"></script>
+    <script src="webjars/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+    <!--<script src="scripts/controller.js"></script>-->
+
+    <script src="scripts/mainController.js"></script>
 
 
     <title>GeoMapping</title>
@@ -33,131 +40,46 @@
 
     </style>
 </head>
-<body>
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
+<body  ng-controller="mainController">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">GeoMapping</a>
-        </div>
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">GeoMapping</a>
+            </div>
 
+
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href="#locations">Locations</a></li>
+                <li><a href="#mapping">Mapping</a></li>
+                <li><a href="#stats">Statistics</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a ng-click="openSettings()">Settings</a></li>
+            </ul>
 
         </div>
     </nav>
 
 
 
-
-    <div class='container-fluid' ng-controller="CountryController">
-        <div ng-class="{'has-error': !selectedCountry.id}">
-            <input  type="text" ng-model="selectedCountry" placeholder="Country" typeahead="item as item.displayName for item in getCountry($viewValue)" typeahead-loading="loadingCountries" class="form-control" typeahead-on-select="onSelect($item,$model,$label)">
-            <i ng-show="loadingCountries" class="glyphicon glyphicon-refresh"></i>
-        </div>
-
-
-
-
-
-
-
-
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">UN Locations</div>
-                        <div ng-class="{'has-error': locationSearch && (locationSearch.name.length < 3)}">
-                            <input type="text" ng-model="locationSearch.name"/><i ng-click="resetLocationFilter()" id="searchclear" class="glyphicon glyphicon-remove-circle"></i>
-                        </div>
-                        <!-- Table -->
-                        <table class="table table-condensed table-striped">
-                            <tr>
-                                <th>UN Location</th>
-                                <th>Action</th>
-                            </tr>
-                            <Tr ng-repeat="location in  filteredLocations | limitTo : -(filteredLocations.length - (locItemsPerPage * (locCurPage -1))) | limitTo: locItemsPerPage">
-                                <td><div ng-click="gotoLocation(location)" class="btn" data-drop="true" ng-model="droppedCities" jqyoui-droppable="{onDrop:'onCityDropped(location)'}">{{location.code}} - {{location.name}}</div></td>
-
-                                <td></td>
-                            </Tr>
-                        </table>
-                        <pagination total-items="locTotalItems" ng-model="locCurPage" items-per-page="locItemsPerPage" max-size="5" class="pagination-sm" boundary-links="true" rotate="true" num-pages="locNumPages"></pagination>
-                        <pre>Page: {{locCurPage}} / {{locNumPages}}. {{filteredLocations.length}}  locations found.  {{locCurPage}}</pre>
-
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Mappings</div>
-
-                        <!-- Table -->
-                        <table class="table table-condensed table-striped">
-                            <tr>
-                                <th>City</th>
-                                <th>UN Location</th>
-                                <th>Action</th>
-                            </tr>
-                            <Tr ng-repeat="mapping in mappings">
-                                <td>{{mapping.city.name}}</td>
-                                <td>{{mapping.location.code}} - {{mapping.location.name}}</td>
-                                <td><div class="btn btn-xs btn-danger" ng-click="deleteMapping($index,mapping.id)"><span class="glyphicon glyphicon-trash"></span> Delete</div></td>
-                            </Tr>
-                        </table>
-
-                    </div>
-                </div>
-
-
-
-                <div class="col-lg-3">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Cities</div>
-
-                        <!-- Table -->
-                        <table class="table table-condensed table-striped">
-                            <tr>
-                                <th>Name</th>
-                                <th>Coordinates</th>
-                                <th>Action</th>
-                            </tr>
-                            <Tr ng-repeat="city in cities">
-                                <td><div ng-model="cities" class="btn" ng-class="{'btn-primary' : !city.mapped}"  data-drag="{{!city.mapped}}" jqyoui-draggable="{animate:true, placeholder:'keep', index: {{$index}}}" data-jqyoui-options="{revert: 'invalid'}" >{{city.name}}</div></td>
-                                <td>{{city.latitude | number : 6}}, {{city.longitude | number : 6}}</td>
-                                <td></td>
-                            </Tr>
-                        </table>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div ng-show="busy">
-            Busy!
-        </div>
-
-        <!-- refresh='selectedCountry.id' -->
-        <ui-gmap-google-map center='map.center'  zoom='zoom' control='map' events="mapEvents" options='map.options' >
-            <ui-gmap-markers models="locations"  coords="'self'" options="'options'" doCluster="true" clusterEvents="clusterEvents" clusterOptions="{maxZoom:15}" fit='clusterFit' doRebuildAll="false" events="locationEvents">
-            </ui-gmap-markers>
-
-            <!--
-            <ui-gmap-markers models="cities" coords="'self'" options="'options'" events="cityMarkerEvents" >
-            </ui-gmap-markers>
-
-
-            <ui-gmap-polyline static="false" ng-repeat="m in mappingLines" path="m.path"></ui-gmap-polyline>
-                -->
-        </ui-gmap-google-map>
-
-
+    <div id="main">
+        <div ng-view></div>
     </div>
+
+
+
+
+    <script type="text/ng-template" id="settings.html">
+
+    </script>
 
 
 

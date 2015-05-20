@@ -42,6 +42,8 @@ dependencies {
     compile 'org.webjars:lodash:3.3.1'
     compile 'org.webjars:codef0rmer-angular-dragdrop:1.0.11'
     compile 'org.webjars:jquery-ui:1.11.4'
+    compile 'org.webjars.bower:angular-block-ui:0.2.0'
+    compile 'org.webjars.bower:bootstrap-toggle:2.2.0'
 
 }
 

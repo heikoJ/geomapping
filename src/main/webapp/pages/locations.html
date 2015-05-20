@@ -1,0 +1,128 @@
+
+
+
+<div class="jumbotron text-center">
+    <h1>Locations</h1>
+
+    <p>{{ message }}</p>
+</div>
+
+
+
+<!--
+
+
+
+
+
+
+
+
+
+
+<div class='container-fluid' ng-controller="CountryController">
+    <div ng-class="{'has-error': !selectedCountry.id}">
+        <input  type="text" ng-model="selectedCountry" placeholder="Country" typeahead="item as item.displayName for item in getCountry($viewValue)" typeahead-loading="loadingCountries" class="form-control" typeahead-on-select="onSelect($item,$model,$label)">
+        <i ng-show="loadingCountries" class="glyphicon glyphicon-refresh"></i>
+    </div>
+
+
+
+
+
+
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">UN Locations</div>
+                    <div ng-class="{'has-error': locationSearch && (locationSearch.name.length < 3)}">
+                        <input type="text" ng-model="locationSearch.name"/><i ng-click="resetLocationFilter()" id="searchclear" class="glyphicon glyphicon-remove-circle"></i>
+                    </div>
+                    &lt;!&ndash; Table &ndash;&gt;
+                    <table class="table table-condensed table-striped">
+                        <tr>
+                            <th>UN Location</th>
+                            <th>Action</th>
+                        </tr>
+                        <Tr ng-repeat="location in  filteredLocations | limitTo : -(filteredLocations.length - (locItemsPerPage * (locCurPage -1))) | limitTo: locItemsPerPage">
+                            <td><div ng-click="gotoLocation(location)" class="btn" data-drop="true" ng-model="droppedCities" jqyoui-droppable="{onDrop:'onCityDropped(location)'}">{{location.code}} - {{location.name}}</div></td>
+
+                            <td></td>
+                        </Tr>
+                    </table>
+                    <pagination total-items="locTotalItems" ng-model="locCurPage" items-per-page="locItemsPerPage" max-size="5" class="pagination-sm" boundary-links="true" rotate="true" num-pages="locNumPages"></pagination>
+                    <pre>Page: {{locCurPage}} / {{locNumPages}}. {{filteredLocations.length}}  locations found.  {{locCurPage}}</pre>
+
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Mappings</div>
+
+                    &lt;!&ndash; Table &ndash;&gt;
+                    <table class="table table-condensed table-striped">
+                        <tr>
+                            <th>City</th>
+                            <th>UN Location</th>
+                            <th>Action</th>
+                        </tr>
+                        <Tr ng-repeat="mapping in mappings">
+                            <td>{{mapping.city.name}}</td>
+                            <td>{{mapping.location.code}} - {{mapping.location.name}}</td>
+                            <td><div class="btn btn-xs btn-danger" ng-click="deleteMapping($index,mapping.id)"><span class="glyphicon glyphicon-trash"></span> Delete</div></td>
+                        </Tr>
+                    </table>
+
+                </div>
+            </div>
+
+
+
+            <div class="col-lg-3">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Cities</div>
+
+                    &lt;!&ndash; Table &ndash;&gt;
+                    <table class="table table-condensed table-striped">
+                        <tr>
+                            <th>Name</th>
+                            <th>Coordinates</th>
+                            <th>Action</th>
+                        </tr>
+                        <Tr ng-repeat="city in cities">
+                            <td><div ng-model="cities" class="btn" ng-class="{'btn-primary' : !city.mapped}"  data-drag="{{!city.mapped}}" jqyoui-draggable="{animate:true, placeholder:'keep', index: {{$index}}}" data-jqyoui-options="{revert: 'invalid'}" >{{city.name}}</div></td>
+                            <td>{{city.latitude | number : 6}}, {{city.longitude | number : 6}}</td>
+                            <td></td>
+                        </Tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="busy">
+        Busy!
+    </div>
+
+    &lt;!&ndash; refresh='selectedCountry.id' &ndash;&gt;
+    <ui-gmap-google-map center='map.center'  zoom='zoom' control='map' events="mapEvents" options='map.options' >
+        <ui-gmap-markers models="locations"  coords="'self'" options="'options'" doCluster="true" clusterEvents="clusterEvents" clusterOptions="{maxZoom:15}" fit='clusterFit' doRebuildAll="false" events="locationEvents">
+        </ui-gmap-markers>
+
+        &lt;!&ndash;
+        <ui-gmap-markers models="cities" coords="'self'" options="'options'" events="cityMarkerEvents" >
+        </ui-gmap-markers>
+
+
+        <ui-gmap-polyline static="false" ng-repeat="m in mappingLines" path="m.path"></ui-gmap-polyline>
+            &ndash;&gt;
+    </ui-gmap-google-map>
+
+
+</div>
+
+-->
