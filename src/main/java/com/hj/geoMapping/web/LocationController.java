@@ -1,20 +1,22 @@
 package com.hj.geoMapping.web;
 
-import com.hj.geoMapping.clustering.ClusteringService;
+import com.hj.geoMapping.clustering.Clusterer;
+
 import com.hj.geoMapping.common.Marker;
-import com.hj.geoMapping.common.MarkerCluster;
+import com.hj.geoMapping.common.ClusterMarker;
 import com.hj.geoMapping.common.GeoBounds;
-import com.hj.geoMapping.common.GeoLocation;
 import com.hj.geoMapping.domain.UNLocation;
 import com.hj.geoMapping.integration.UNLocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import static com.hj.geoMapping.clustering.Clusterer.*;
 
 /**
  * Created by heiko on 05.04.15.
@@ -27,11 +29,10 @@ public class LocationController {
     @Autowired
     UNLocationRepository repository;
 
-    @Autowired
-    ClusteringService clusteringService;
+
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Set<Marker> findCitiesByCountry(
+    public Collection<? extends Marker> findCitiesByCountry(
             @RequestParam("bounds") String boundsAsString) {
 
         Iterable<UNLocation> locations = repository.findAll();
@@ -45,7 +46,7 @@ public class LocationController {
     }
 
 
-    private Set<Marker> getLocationsForBounds(Iterable<UNLocation> locations, GeoBounds bounds, float clusterSize) {
+    private Collection<? extends Marker> getLocationsForBounds(Iterable<UNLocation> locations, GeoBounds bounds, float clusterSize) {
 
         long start = System.currentTimeMillis();
 
@@ -63,7 +64,7 @@ public class LocationController {
 
         start = System.currentTimeMillis();
 
-        Set<Marker> result =  clusteringService.doCluster(markers,clusterSize);
+        Collection<? extends Marker> result = clustererWithSize(clusterSize).doCluster(markers);
 
         end = System.currentTimeMillis();
 
@@ -72,11 +73,7 @@ public class LocationController {
 
         return result;
 
-       /* if(markers.size()>1000) {
-            return getTooMuchMarkersMarker(bounds);
-        }
 
-        return markers;*/
 
     }
 

@@ -1,4 +1,4 @@
-var geomappingApp = angular.module('geomappingApp', ['ngRoute','ui.bootstrap']);
+var geomappingApp = angular.module('geomappingApp', ['ngRoute','ui.bootstrap','uiGmapgoogle-maps']);
 
 // configure our routes
 geomappingApp.config(function($routeProvider) {
@@ -84,9 +84,66 @@ geomappingApp.controller('statsController', function($scope) {
 });
 
 // create the controller and inject Angular's $scope
-geomappingApp.controller('locationController', function($scope) {
-    // create a message to display in our view
-    $scope.message = 'Locations';
+geomappingApp.controller('locationController', function($scope,$http, $log) {
+
+
+    $scope.markers = [];
+
+    $scope.bounds={}
+
+    var locationRequestCount=0;
+
+
+    $scope.zoom = 3;
+
+    $scope.map = { center: { latitude: 40.2534258, longitude: 31.1740902 }, zoom: 3, options: {disableDefaultUI: false, draggable: true} };
+
+
+
+
+    $scope.getLocations = function(bounds) {
+        locationRequestCount++;
+        //$log.log("Zoom: " +$scope.zoom);
+
+        $http.get("/locations/?bounds=" + bounds ).
+            then(function (response) {
+                locationRequestCount--;
+                if(locationRequestCount==0) {
+                    $scope.markers = response.data;
+                    //$log.log($scope.markers);
+                }
+            });
+    };
+
+
+    $scope.mapEvents = {
+
+
+        idle: function() {
+            var bounds = $scope.map.getGMap().getBounds();
+            var boundsStr = bounds.getSouthWest().toUrlValue() + "," + bounds.getNorthEast().toUrlValue();
+
+            $log.log("Bounds" + boundsStr);
+
+            $scope.getLocations(boundsStr);
+        }
+
+    };
+
+    $scope.locationEvents = {
+
+        click: function(marker,eventName, model) {
+
+            $log.log("MArker clikc");
+            $log.log(model);
+
+
+            $scope.map.getGMap().fitBounds(model.bounds);
+
+        }
+    };
+
+
 });
 
 geomappingApp.directive('toggleCheckbox', function($timeout) {

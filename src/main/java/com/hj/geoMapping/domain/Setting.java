@@ -25,6 +25,8 @@ public class Setting {
     @Column(name="VALUE")
     private String value;
 
+    public Setting() {}
+
     public Setting(String name,String value) {
         this.setName(name);
         this.setValue(value);

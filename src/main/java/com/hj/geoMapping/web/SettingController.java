@@ -16,7 +16,8 @@ import java.util.Map;
 /**
  * Created by heiko on 23.05.15.
  */
-@RestController("/settings")
+@RestController
+@RequestMapping("/settings")
 public class SettingController {
 
     @Autowired

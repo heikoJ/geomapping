@@ -1,6 +1,7 @@
 package com.hj.geoMapping.common;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -11,9 +12,10 @@ import lombok.Data;
 @Data
 public class Marker {
 
-    private GeoLocation location;
+    @JsonIgnore
+    protected GeoLocation location;
 
-    private String name;
+    protected String name;
 
     private Long id;
 
@@ -24,11 +26,26 @@ public class Marker {
     }
 
 
-    @JsonProperty("options")
-    public GoogleMapsMarkerOptions getOptions() {
-        return new GoogleMapsMarkerOptions(false,"https://chart.googleapis.com/chart?chst=d_bubble_text_small_withshadow&chld=edge_bc|" + name + "|C6EF8C|000000");
+    @JsonProperty
+    public float getLatitude() {
+        return location.getLatitude();
     }
 
+    @JsonProperty
+    public float getLongitude() {
+        return location.getLongitude();
+    }
+
+
+    @JsonProperty("options")
+    public GoogleMapsMarkerOptions getOptions() {
+        return new GoogleMapsMarkerOptions(true,name);
+    }
+
+
+    public float distanceTo(Marker marker) {
+        return location.distanceTo(marker.location);
+    }
 
 
 }

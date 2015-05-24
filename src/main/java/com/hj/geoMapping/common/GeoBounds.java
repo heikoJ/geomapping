@@ -1,5 +1,6 @@
 package com.hj.geoMapping.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,8 +12,10 @@ import lombok.ToString;
 @Data
 public class GeoBounds {
 
+    @JsonProperty("sw")
     private GeoLocation southWestLocation;
 
+    @JsonProperty("ne")
     private GeoLocation northEastLocation;
 
     public GeoBounds(String bounds) {

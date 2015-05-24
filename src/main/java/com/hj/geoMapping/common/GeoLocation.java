@@ -1,5 +1,6 @@
 package com.hj.geoMapping.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -8,8 +9,10 @@ import lombok.Data;
 @Data
 public class GeoLocation {
 
+    @JsonProperty("lat")
     private float latitude;
 
+    @JsonProperty("lng")
     private float longitude;
 
     public GeoLocation(float latitude, float longitude) {
@@ -40,7 +43,7 @@ public class GeoLocation {
                 equalsOrSouthWestOf(bounds.getNorthEastLocation());
     }
 
-    public float getDistanceTo(GeoLocation location) {
+    public float distanceTo(GeoLocation location) {
         float deltaLongitude = location.longitude - longitude;
         float deltaLatitude = location.latitude - latitude;
 
