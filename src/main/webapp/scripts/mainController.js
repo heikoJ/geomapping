@@ -137,8 +137,13 @@ geomappingApp.controller('locationController', function($scope,$http, $log) {
             $log.log("MArker clikc");
             $log.log(model);
 
+            var sw = new google.maps.LatLng(model.bounds.sw.lat,model.bounds.sw.lng);
+            var ne = new google.maps.LatLng(model.bounds.ne.lat,model.bounds.ne.lng);
+            var bounds = new google.maps.LatLngBounds(sw,ne);
+//            bounds.extend(sw);
+  //          bounds.extend(ne);
 
-            $scope.map.getGMap().fitBounds(model.bounds);
+            $scope.map.getGMap().fitBounds(bounds);
 
         }
     };

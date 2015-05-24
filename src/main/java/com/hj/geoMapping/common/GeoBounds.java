@@ -1,5 +1,6 @@
 package com.hj.geoMapping.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
@@ -49,6 +50,7 @@ public class GeoBounds {
         return (southWestLocation.isInBounds(bounds)) || northEastLocation.isInBounds(bounds) || getSouthEastLocation().isInBounds(bounds) || getNortWestLocation().isInBounds(bounds);
     }
 
+    @JsonIgnore
     public GeoLocation getCenter() {
         return new GeoLocation((northEastLocation.getLatitude() + southWestLocation.getLatitude())/2.0f, (northEastLocation.getLongitude() + southWestLocation.getLongitude()) / 2.0f);
     }
