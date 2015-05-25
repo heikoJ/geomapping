@@ -98,6 +98,17 @@ geomappingApp.controller('locationController', function($scope,$http, $log) {
 
     $scope.map = { center: { latitude: 40.2534258, longitude: 31.1740902 }, zoom: 3, options: {disableDefaultUI: false, draggable: true} };
 
+    $scope.windowOptions = {
+        visible: false
+    };
+
+    $scope.cuurentMarker = null;
+    $scope.hideOthers = false;
+
+
+    $scope.closeClick = function() {
+        $scope.windowOptions.visible = false;
+    };
 
 
 
@@ -120,17 +131,26 @@ geomappingApp.controller('locationController', function($scope,$http, $log) {
 
 
         idle: function() {
-            var bounds = $scope.map.getGMap().getBounds();
-            var boundsStr = bounds.getSouthWest().toUrlValue() + "," + bounds.getNorthEast().toUrlValue();
+            if(!$scope.hideOthers) {
+                var bounds = $scope.map.getGMap().getBounds();
+                var boundsStr = bounds.getSouthWest().toUrlValue() + "," + bounds.getNorthEast().toUrlValue();
 
-            $log.log("Bounds" + boundsStr);
+                $log.log("Bounds" + boundsStr);
 
-            $scope.getLocations(boundsStr);
+                $scope.getLocations(boundsStr);
+            }
         }
 
     };
 
     $scope.locationEvents = {
+
+        dragend: function(marker,eventName,model) {
+            $log.log("dragend");
+            if(model.id>0) {
+                $http.put("/locations/" + model.id, model);
+            }
+        },
 
         click: function(marker,eventName, model) {
 
@@ -140,13 +160,29 @@ geomappingApp.controller('locationController', function($scope,$http, $log) {
             var sw = new google.maps.LatLng(model.bounds.sw.lat,model.bounds.sw.lng);
             var ne = new google.maps.LatLng(model.bounds.ne.lat,model.bounds.ne.lng);
             var bounds = new google.maps.LatLngBounds(sw,ne);
-//            bounds.extend(sw);
-  //          bounds.extend(ne);
 
             $scope.map.getGMap().fitBounds(bounds);
 
+        },
+
+        rightclick: function(marker,eventName,model) {
+            $log.log("Right click");
+            $scope.windowOptions.position = marker.position;
+            $scope.currentMarker = model;
+            $scope.windowOptions.visible = !$scope.windowOptions.visible;
         }
     };
+
+    $scope.$root.toggleHideOtherMarkers = function() {
+        $scope.hideOthers = !$scope.hideOthers;
+        $scope.markers.forEach(function (marker) {
+            if (marker != $scope.currentMarker) {
+                marker.options.visible = !$scope.hideOthers;
+            }
+        });
+
+        $scope.map.refresh();
+    }
 
 
 });

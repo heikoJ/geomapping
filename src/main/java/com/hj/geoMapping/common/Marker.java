@@ -27,12 +27,12 @@ public class Marker {
 
 
     @JsonProperty
-    public float getLatitude() {
+    public double getLatitude() {
         return location.getLatitude();
     }
 
     @JsonProperty
-    public float getLongitude() {
+    public double getLongitude() {
         return location.getLongitude();
     }
 
@@ -43,7 +43,7 @@ public class Marker {
     }
 
 
-    public float distanceTo(Marker marker) {
+    public double distanceTo(Marker marker) {
         return location.distanceTo(marker.location);
     }
 

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -30,9 +28,9 @@ public class ClusterMarker extends Marker {
     private int markerCount;
 
     @JsonIgnore
-    private float size;
+    private double size;
 
-    public ClusterMarker(Marker marker, float size) {
+    public ClusterMarker(Marker marker, double size) {
         super(marker.getLocation(),marker.getName(),marker.getId());
         this.size = size;
         makeBounds();
@@ -67,22 +65,9 @@ public class ClusterMarker extends Marker {
         if(this.markerCount==1) {
             return super.getOptions();
         }
-        return new GoogleMapsMarkerOptions(true,name,getClusterIcon());
+        return new GoogleMapsMarkerOptions(true,name,ClusterIcon.iconForMarkerCount(this.markerCount));
     }
 
-    private ClusterIcon getClusterIcon() {
-        if(this.markerCount<10) {
-            return ClusterIcon.M1;
-        } else if(this.markerCount<100) {
-            return ClusterIcon.M2;
-        } else if(this.markerCount<1000) {
-            return ClusterIcon.M3;
-        } else if(this.markerCount<10000) {
-            return ClusterIcon.M4;
-        } else {
-            return ClusterIcon.M5;
-        }
-    }
 
 
 

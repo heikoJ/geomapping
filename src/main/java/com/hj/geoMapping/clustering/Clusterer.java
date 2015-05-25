@@ -13,17 +13,17 @@ import java.util.stream.Collectors;
 public class Clusterer {
 
 
-    private float clusterSize;
+    private double clusterSize;
 
 
     Set<ClusterMarker> clusters;
 
 
-    public static Clusterer clustererWithSize(float clusterSize) {
+    public static Clusterer clustererWithSize(double clusterSize) {
         return new Clusterer(clusterSize);
     }
 
-    private Clusterer(float clusterSize) {
+    private Clusterer(double clusterSize) {
         this.clusterSize = clusterSize;
         this.clusters = new HashSet<>();
     }
@@ -36,49 +36,41 @@ public class Clusterer {
             return markers;
         }
 
-        for (Marker marker : markers) {
-            addMarker(marker);
-        }
+        markers.forEach(this::addMarker);
 
         return clusters;
 
     }
 
 
-    private void addMarker( Marker marker) {
-        ClusterMarker nearestEnclosingCluster = getNearestEnclosingCluster(marker);
+    void addMarker( Marker marker) {
+        Optional<ClusterMarker> nearestEnclosingCluster = getNearestEnclosingCluster(marker);
 
-        if(nearestEnclosingCluster!=null) {
-            nearestEnclosingCluster.add(marker);
+        if(nearestEnclosingCluster.isPresent()) {
+            nearestEnclosingCluster.get().add(marker);
         } else {
             clusters.add(new ClusterMarker(marker, clusterSize));
         }
     }
 
-    private ClusterMarker getNearestEnclosingCluster( Marker marker) {
-        Set<ClusterMarker> enclosingClusters = getEnlcosingClusters( marker);
-        return getNearestCluster(enclosingClusters,marker);
+    Optional<ClusterMarker> getNearestEnclosingCluster( Marker marker) {
+        Map<Double,ClusterMarker> enclosingClusters = getEnlcosingClustersWithDistance(marker);
+
+        return enclosingClusters.
+                keySet().
+                stream().
+                min((distance1, distance2) -> distance1.compareTo(distance2)).
+                map(minDistance -> enclosingClusters.get(minDistance));
+
     }
 
-    private Set<ClusterMarker> getEnlcosingClusters( Marker marker) {
-        return clusters.parallelStream().
+    Map<Double,ClusterMarker> getEnlcosingClustersWithDistance( Marker marker) {
+        return clusters.stream().
                 filter(cluster -> cluster.includes(marker)).
-                collect(Collectors.toSet());
-    }
-
-
-    private ClusterMarker getNearestCluster( Set<ClusterMarker> clusters,Marker marker) {
-        ClusterMarker nearestCluster= null;
-        float minDistance = Float.MAX_VALUE;
-        for(ClusterMarker cluster : clusters) {
-            float distance = marker.distanceTo(cluster);
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearestCluster = cluster;
-            }
-        }
-
-        return nearestCluster;
+                collect (Collectors.toMap(
+                                clusterMarker -> marker.distanceTo(clusterMarker),
+                                clusterMarker -> clusterMarker,
+                                (clusterMarker1,clusterMarker2) -> clusterMarker1));
     }
 
 

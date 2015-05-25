@@ -29,6 +29,8 @@ public class GoogleMapsMarkerOptions {
 
     private boolean draggable = false;
 
+    private boolean visible=true;
+
     private String labelContent;
 
     private Map<String,String> labelStyle = LABLE_STYLE;

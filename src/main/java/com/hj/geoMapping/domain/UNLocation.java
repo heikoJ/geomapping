@@ -3,6 +3,7 @@ package com.hj.geoMapping.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hj.geoMapping.common.GeoLocation;
 import lombok.Data;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.beans.Transient;
@@ -52,4 +53,12 @@ public class UNLocation {
 
     public UNLocation() {
     }
+
+
+    public void updateValuesFrom(UNLocation that) {
+        this.name = that.name;
+        this.latitude = that.latitude;
+        this.longitude = that.longitude;
+    }
+
 }

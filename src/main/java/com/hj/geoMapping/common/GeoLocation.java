@@ -10,21 +10,21 @@ import lombok.Data;
 public class GeoLocation {
 
     @JsonProperty("lat")
-    private float latitude;
+    private double latitude;
 
     @JsonProperty("lng")
-    private float longitude;
+    private double longitude;
 
-    public GeoLocation(float latitude, float longitude) {
+    public GeoLocation(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public void addToLatitude(float x) {
+    public void addToLatitude(double x) {
         this.latitude+=x;
     }
 
-    public void addToLongitude(float x) {
+    public void addToLongitude(double x) {
         this.longitude+=x;
     }
 
@@ -43,15 +43,17 @@ public class GeoLocation {
                 equalsOrSouthWestOf(bounds.getNorthEastLocation());
     }
 
-    public float distanceTo(GeoLocation location) {
-        float deltaLongitude = location.longitude - longitude;
-        float deltaLatitude = location.latitude - latitude;
+    public double distanceTo(GeoLocation location) {
+        double deltaLongitude = location.longitude - longitude;
+        double deltaLatitude = location.latitude - latitude;
 
-        double a = Math.pow((Math.sin(deltaLatitude/2.0d)),2) + Math.cos(latitude) * Math.cos(location.latitude) * Math.pow((Math.sin(deltaLongitude/2.0d)),2);
+        double latSin = Math.sin(deltaLatitude/2.0d);
+        double lonSin = Math.sin(deltaLongitude/2.0d);
+
+        double a = latSin * latSin + Math.cos(latitude) * Math.cos(location.latitude) * lonSin * lonSin;
         double c = 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = 6373 * c;
+        return 6373 * c;
 
-        return new Double(distance).floatValue();
     }
 
 }

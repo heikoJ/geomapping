@@ -6,6 +6,15 @@
     <ui-gmap-markers models="markers"  coords="'self'" options="'options'" doCluster="false"  doRebuildAll="false" events="locationEvents"  >
     </ui-gmap-markers>
 
+
+    <ui-gmap-window options="windowOptions" closeClick="closeClick()">
+        <div>
+            <a ng-click="$root.toggleHideOtherMarkers()">
+                Hide all other markers
+            </a>
+        </div>
+    </ui-gmap-window>
+
 </ui-gmap-google-map>
 
 

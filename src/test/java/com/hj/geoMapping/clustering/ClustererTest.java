@@ -5,19 +5,23 @@ import com.hj.geoMapping.common.Marker;
 import com.hj.geoMapping.common.ClusterMarker;
 import com.hj.geoMapping.domain.UNLocation;
 import com.hj.geoMapping.integration.UNLocationRepository;
+import static com.hj.geoMapping.util.ExecutionTimer.*;
+
+import com.hj.geoMapping.util.ExecutionTimer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-public class ClusteringServiceTest {
+public class ClustererTest {
 
 
     @Autowired
@@ -38,11 +42,15 @@ public class ClusteringServiceTest {
                         location.getId())).
                 collect(Collectors.toSet());
 
-        Set<ClusterMarker> clusters = Clusterer.create(10f).doCluster(geoLocations);
+
+        ExecutionTimer timer = timer(System.out, "clustering").start();
+        Collection<? extends Marker> clusters = Clusterer.clustererWithSize(10f).doCluster(geoLocations);
+        timer.stopAndPrintResults();
 
         System.out.println("Clusters: " + clusters.size());
 
-        clusters.forEach(System.out::println);
+
+        //clusters.forEach(System.out::println);
 
     }
 
