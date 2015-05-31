@@ -89,7 +89,8 @@ geomappingApp.controller('locationController', function($scope,$http, $log) {
 
     $scope.markers = [];
 
-    $scope.bounds={}
+
+
 
     var locationRequestCount=0;
 
@@ -114,14 +115,18 @@ geomappingApp.controller('locationController', function($scope,$http, $log) {
 
     $scope.getLocations = function(bounds) {
         locationRequestCount++;
+        $log.log("Get locations " + locationRequestCount);
         //$log.log("Zoom: " +$scope.zoom);
 
         $http.get("/locations/?bounds=" + bounds ).
             then(function (response) {
                 locationRequestCount--;
-                if(locationRequestCount==0) {
+                if(locationRequestCount<=0) {
+                    $log.log("got locations: " + locationRequestCount);
+
                     $scope.markers = response.data;
-                    //$log.log($scope.markers);
+
+                    $scope.map.refresh();
                 }
             });
     };
@@ -157,12 +162,13 @@ geomappingApp.controller('locationController', function($scope,$http, $log) {
             $log.log("MArker clikc");
             $log.log(model);
 
-            var sw = new google.maps.LatLng(model.bounds.sw.lat,model.bounds.sw.lng);
-            var ne = new google.maps.LatLng(model.bounds.ne.lat,model.bounds.ne.lng);
-            var bounds = new google.maps.LatLngBounds(sw,ne);
+            if(model.bounds) {
+                var sw = new google.maps.LatLng(model.bounds.sw.lat, model.bounds.sw.lng);
+                var ne = new google.maps.LatLng(model.bounds.ne.lat, model.bounds.ne.lng);
+                var bounds = new google.maps.LatLngBounds(sw, ne);
 
-            $scope.map.getGMap().fitBounds(bounds);
-
+                $scope.map.getGMap().fitBounds(bounds);
+            }
         },
 
         rightclick: function(marker,eventName,model) {
@@ -170,13 +176,23 @@ geomappingApp.controller('locationController', function($scope,$http, $log) {
             $scope.windowOptions.position = marker.position;
             $scope.currentMarker = model;
             $scope.windowOptions.visible = !$scope.windowOptions.visible;
+        },
+
+        dblclick: function(m,eventName,model) {
+            $scope.hideOthers = !$scope.hideOthers;
+            $scope.markers.forEach(function (marker) {
+                if (marker.id !== model.id) {
+                    marker.options.visible = !$scope.hideOthers;
+                }
+            });
         }
+
     };
 
     $scope.$root.toggleHideOtherMarkers = function() {
         $scope.hideOthers = !$scope.hideOthers;
         $scope.markers.forEach(function (marker) {
-            if (marker != $scope.currentMarker) {
+            if (marker !== $scope.currentMarker) {
                 marker.options.visible = !$scope.hideOthers;
             }
         });

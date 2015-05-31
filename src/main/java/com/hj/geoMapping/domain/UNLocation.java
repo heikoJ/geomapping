@@ -2,11 +2,12 @@ package com.hj.geoMapping.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hj.geoMapping.common.GeoLocation;
+import com.hj.geoMapping.common.HasLocation;
 import lombok.Data;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
-import java.beans.Transient;
+
 
 /**
  * Created by heiko on 03.04.15.
@@ -14,7 +15,7 @@ import java.beans.Transient;
 @Entity
 @Table(name="UN_LOCATION")
 @Data
-public class UNLocation {
+public class UNLocation implements HasLocation{
 
     @Id
     @GeneratedValue
@@ -41,6 +42,9 @@ public class UNLocation {
     }
 
     @Transient
+    private GeoLocation geoLocation;
+
+    @Transient
     public String getCountryCode() {
         return code.substring(0,2);
     }
@@ -48,17 +52,34 @@ public class UNLocation {
     @Transient
     @JsonIgnore
     public GeoLocation getGeoLocation() {
-        return new GeoLocation(latitude,longitude);
+        if(geoLocation==null) {
+            geoLocation = new GeoLocation(latitude,longitude);
+        }
+        return geoLocation;
     }
 
     public UNLocation() {
+
     }
 
 
+    public void setLatitude(Float latitude) {
+        this.latitude = latitude;
+        if(this.geoLocation!=null)
+            this.geoLocation.setLatitude(latitude);
+    }
+
+
+    public void setLongitude(Float longitude) {
+        this.longitude = longitude;
+        if(geoLocation!=null)
+            this.getGeoLocation().setLongitude(longitude);
+    }
+
     public void updateValuesFrom(UNLocation that) {
         this.name = that.name;
-        this.latitude = that.latitude;
-        this.longitude = that.longitude;
+        this.setLatitude(that.latitude);
+        this.setLongitude(that.longitude);
     }
 
 }

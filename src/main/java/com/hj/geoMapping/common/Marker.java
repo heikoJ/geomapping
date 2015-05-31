@@ -25,6 +25,10 @@ public class Marker {
         this.name = name;
     }
 
+    public Marker(HasLocation location) {
+        this(location.getGeoLocation(),location.getName(),location.getId());
+    }
+
 
     @JsonProperty
     public double getLatitude() {

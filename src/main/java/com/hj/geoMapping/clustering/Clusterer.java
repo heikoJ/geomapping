@@ -1,5 +1,6 @@
 package com.hj.geoMapping.clustering;
 
+import com.hj.geoMapping.common.HasLocation;
 import com.hj.geoMapping.common.Marker;
 import com.hj.geoMapping.common.ClusterMarker;
 
@@ -30,31 +31,33 @@ public class Clusterer {
 
 
 
-    public Collection<? extends Marker> doCluster(Collection<Marker>markers) {
+    public Collection<? extends Marker> doCluster(Collection<HasLocation>locations) {
 
-        if(markers.size()<150) {
-            return markers;
+        if(locations.size()<150) {
+            return locations.stream().
+                    map(location -> new Marker(location)).
+                    collect(Collectors.toSet());
         }
 
-        markers.forEach(this::addMarker);
+        locations.forEach(this::addMarker);
 
         return clusters;
 
     }
 
 
-    void addMarker( Marker marker) {
-        Optional<ClusterMarker> nearestEnclosingCluster = getNearestEnclosingCluster(marker);
+    void addMarker( HasLocation location) {
+        Optional<ClusterMarker> nearestEnclosingCluster = getNearestEnclosingCluster(location);
 
         if(nearestEnclosingCluster.isPresent()) {
-            nearestEnclosingCluster.get().add(marker);
+            nearestEnclosingCluster.get().addLocation();
         } else {
-            clusters.add(new ClusterMarker(marker, clusterSize));
+            clusters.add(new ClusterMarker(location, clusterSize));
         }
     }
 
-    Optional<ClusterMarker> getNearestEnclosingCluster( Marker marker) {
-        Map<Double,ClusterMarker> enclosingClusters = getEnlcosingClustersWithDistance(marker);
+    Optional<ClusterMarker> getNearestEnclosingCluster( HasLocation location) {
+        Map<Double,ClusterMarker> enclosingClusters = getEnlcosingClustersWithDistance(location);
 
         return enclosingClusters.
                 keySet().
@@ -64,13 +67,13 @@ public class Clusterer {
 
     }
 
-    Map<Double,ClusterMarker> getEnlcosingClustersWithDistance( Marker marker) {
+    Map<Double,ClusterMarker> getEnlcosingClustersWithDistance( HasLocation location) {
         return clusters.stream().
-                filter(cluster -> cluster.includes(marker)).
-                collect (Collectors.toMap(
-                                clusterMarker -> marker.distanceTo(clusterMarker),
+                filter(cluster -> (cluster.includes(location.getGeoLocation()))).
+                        collect(Collectors.toMap(
+                                clusterMarker -> location.getGeoLocation().distanceTo(clusterMarker.getLocation()),
                                 clusterMarker -> clusterMarker,
-                                (clusterMarker1,clusterMarker2) -> clusterMarker1));
+                                (clusterMarker1, clusterMarker2) -> clusterMarker1));
     }
 
 

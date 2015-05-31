@@ -2,6 +2,7 @@ package com.hj.geoMapping.web;
 
 import com.hj.geoMapping.clustering.Clusterer;
 
+import com.hj.geoMapping.common.HasLocation;
 import com.hj.geoMapping.common.Marker;
 import com.hj.geoMapping.common.ClusterMarker;
 import com.hj.geoMapping.common.GeoBounds;
@@ -54,10 +55,9 @@ public class LocationController {
 
         long start = System.currentTimeMillis();
 
-        Set<Marker> markers =
+        Set<HasLocation> unLocations =
                 StreamSupport.stream(locations.spliterator(),false).
                         filter(location -> location.getGeoLocation().isInBounds(bounds)).
-                        map(location -> new Marker(location.getGeoLocation(), location.getName(), location.getId())).
                         collect(Collectors.toSet());
 
         long end = System.currentTimeMillis();
@@ -69,7 +69,7 @@ public class LocationController {
 
         Collection<? extends Marker> result =
                 clustererWithSize(clusterSize).
-                        doCluster(markers);
+                        doCluster(unLocations);
 
         end = System.currentTimeMillis();
 

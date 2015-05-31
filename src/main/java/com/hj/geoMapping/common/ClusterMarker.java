@@ -30,8 +30,8 @@ public class ClusterMarker extends Marker {
     @JsonIgnore
     private double size;
 
-    public ClusterMarker(Marker marker, double size) {
-        super(marker.getLocation(),marker.getName(),marker.getId());
+    public ClusterMarker(HasLocation location, double size) {
+        super(location.getGeoLocation(),location.getName(),location.getId());
         this.size = size;
         makeBounds();
         this.markerCount = 1;
@@ -40,13 +40,13 @@ public class ClusterMarker extends Marker {
 
 
 
-    public boolean includes(Marker marker) {
-        return marker.getLocation().isInBounds(bounds);
+    public boolean includes(GeoLocation location) {
+        return location.isInBounds(bounds);
     }
 
 
 
-    public void add(Marker marker) {
+    public void addLocation() {
         setId(createID());
         markerCount++;
         name = String.valueOf(markerCount);
